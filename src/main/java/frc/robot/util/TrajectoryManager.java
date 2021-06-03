@@ -91,45 +91,45 @@ public class TrajectoryManager implements Runnable {
 
         // Trajectories are read from Pathweaver .json file; place file in src/main/deploy before building
 
-        RobotContainer.setBarrelRacingTrajectoryCommand(createTrajectory("BarrelRacing6"));
-        RobotContainer.setSlalomTrajectoryCommand(createTrajectory("Slalom"));
+        // RobotContainer.setBarrelRacingTrajectoryCommand(createTrajectory("BarrelRacing6"));
+        // RobotContainer.setSlalomTrajectoryCommand(createTrajectory("Slalom"));
 
-        try {
-            Trajectory a3 = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-A3.wpilib.json"));
-            Trajectory a6 = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-A6.wpilib.json"));
-            Trajectory a9 = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-A9.wpilib.json"));
-            Trajectory finish = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-finish.wpilib.json"));
-            SequentialCommandGroup command = new SequentialCommandGroup(
-                new TrajectoryCommand(a3, RobotContainer.getDrivebaseSubsystem()).beforeStarting(() -> {
-                        RobotContainer.getDrivebaseSubsystem().resetOdometry(a3.getInitialPose());
-                    }),
-                new TrajectoryCommand(a6, RobotContainer.getDrivebaseSubsystem()),
-                new TrajectoryCommand(a9, RobotContainer.getDrivebaseSubsystem()),
-                new TrajectoryCommand(finish, RobotContainer.getDrivebaseSubsystem())
-            );
+        // try {
+        //     Trajectory a3 = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-A3.wpilib.json"));
+        //     Trajectory a6 = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-A6.wpilib.json"));
+        //     Trajectory a9 = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-A9.wpilib.json"));
+        //     Trajectory finish = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/Bounce-finish.wpilib.json"));
+        //     SequentialCommandGroup command = new SequentialCommandGroup(
+        //         new TrajectoryCommand(a3, RobotContainer.getDrivebaseSubsystem()).beforeStarting(() -> {
+        //                 RobotContainer.getDrivebaseSubsystem().resetOdometry(a3.getInitialPose());
+        //             }),
+        //         new TrajectoryCommand(a6, RobotContainer.getDrivebaseSubsystem()),
+        //         new TrajectoryCommand(a9, RobotContainer.getDrivebaseSubsystem()),
+        //         new TrajectoryCommand(finish, RobotContainer.getDrivebaseSubsystem())
+        //     );
 
-            RobotContainer.setBounceTrajectoryCommand(command);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        //     RobotContainer.setBounceTrajectoryCommand(command);
+        // } catch (IOException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+        // }
 
-        try {
-            m_GSBlueA = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-A-Blue.wpilib.json"));
-            m_GSBlueB = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-B-Blue.wpilib.json"));
-            m_GSRedA = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-A-Red.wpilib.json"));
-            m_GSRedB = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-B-Red.wpilib.json"));
+        // try {
+        //     m_GSBlueA = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-A-Blue.wpilib.json"));
+        //     m_GSBlueB = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-B-Blue.wpilib.json"));
+        //     m_GSRedA = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-A-Red.wpilib.json"));
+        //     m_GSRedB = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/GS-B-Red.wpilib.json"));
 
-            m_galacticTrajectories[0] = createTrajectory(m_GSBlueA);
-            m_galacticTrajectories[1] = createTrajectory(m_GSBlueB);
-            m_galacticTrajectories[2] = createTrajectory(m_GSRedA);
-            m_galacticTrajectories[3] = createTrajectory(m_GSRedB);
+        //     m_galacticTrajectories[0] = createTrajectory(m_GSBlueA);
+        //     m_galacticTrajectories[1] = createTrajectory(m_GSBlueB);
+        //     m_galacticTrajectories[2] = createTrajectory(m_GSRedA);
+        //     m_galacticTrajectories[3] = createTrajectory(m_GSRedB);
 
-            RobotContainer.setGalacticSearchTrajectoryCommands(m_galacticTrajectories);
+        //     RobotContainer.setGalacticSearchTrajectoryCommands(m_galacticTrajectories);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
 
         System.out.println("Auto paths created");
         RobotContainer.configureAutoChooser();

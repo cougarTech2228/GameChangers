@@ -22,11 +22,11 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        String selection = RobotContainer.getAutoChooserOption();
+        String selection = "Power Tower";
         
         
         if(selection != null &&
-            !selection.equals (selectedAuto)){
+            !selection.equals (selectedAuto)) {
                 
                 System.out.println(selection);
                 selectedAuto = selection;

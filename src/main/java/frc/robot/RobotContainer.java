@@ -58,7 +58,7 @@ public class RobotContainer {
     private final static TrajectoryManager m_trajectoryManager = new TrajectoryManager(m_storageSubsystem, m_acquisitionSubsystem);
 
     private final static SendableChooser<Double> m_manualVelocityChooser = new SendableChooser<>();
-    private final static SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+    //private final static SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
     private static Command m_basicTrajectoryCommand;
     private static Command m_barrelRacingTrajectoryCommand;
@@ -147,18 +147,14 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        System.out.println("Auto: " + m_autoChooser.getSelected().getName());
-        return m_autoChooser.getSelected();
+        //System.out.println("Auto: " + m_autoChooser.getSelected().getName());
+        return m_basicTrajectoryCommand;
     }
 
     // Shooting Commands
 
-    public static ShootThreeDrumCommand getShootThreeDrumCommand() {
-        return new ShootThreeDrumCommand(m_shooterSubsystem, m_storageSubsystem, m_acquisitionSubsystem);
-    }
-
-    public static ShootEntireDrumCommand getShootEntireDrumCommand() {
-        return new ShootEntireDrumCommand(m_shooterSubsystem, m_storageSubsystem, m_acquisitionSubsystem);
+    public static ShootCommand getShootCommand(int numOfShots) {
+        return new ShootCommand(m_shooterSubsystem, m_storageSubsystem, numOfShots);
     }
 
     public static BopperCommand getBopperCommand() {
@@ -228,29 +224,29 @@ public class RobotContainer {
     }
 
     public static void configureAutoChooser() {
-      SmartDashboard.putData("Auto Chooser", m_autoChooser);
-      m_autoChooser.setDefaultOption("Barrel Race", m_barrelRacingTrajectoryCommand);
-      m_autoChooser.addOption("Slalom", m_slalomTrajectoryCommand);
-      m_autoChooser.addOption("Bounce", m_bounceTrajectoryCommand);
-      m_autoChooser.addOption("Galactic Search", new GalacticSearchAutoCommand(m_visionSubsystem)
-      .beforeStarting(() -> {
-        m_acquisitionSubsystem.deployAcquirer(true);
-        m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW);
-      }
-      ).withName("Galactic Search"));
-      m_autoChooser.addOption("Power Tower", m_powerTowerCommand);
-      m_autoChooser.addOption("Basic", m_basicTrajectoryCommand);
-      m_autoChooser.addOption("GS-Red-A", m_galacticSearchTrajectoryCommands[2]);
-      m_autoChooser.addOption("GS-Red-B", m_galacticSearchTrajectoryCommands[3]);
-      m_autoChooser.addOption("GS-Blue-A", m_galacticSearchTrajectoryCommands[0]);
-      m_autoChooser.addOption("GS-Blue-B", m_galacticSearchTrajectoryCommands[1]);
+      //SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    //   m_autoChooser.setDefaultOption("Barrel Race", m_barrelRacingTrajectoryCommand);
+    //   m_autoChooser.addOption("Slalom", m_slalomTrajectoryCommand);
+    //   m_autoChooser.addOption("Bounce", m_bounceTrajectoryCommand);
+    //   m_autoChooser.addOption("Galactic Search", new GalacticSearchAutoCommand(m_visionSubsystem)
+    //   .beforeStarting(() -> {
+    //     m_acquisitionSubsystem.deployAcquirer(true);
+    //     m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW);
+    //   }
+    //   ).withName("Galactic Search"));
+      //m_autoChooser.addOption("Power Tower", m_powerTowerCommand);
+      //m_autoChooser.setDefaultOption("Basic", m_basicTrajectoryCommand);
+      //m_autoChooser.addOption("GS-Red-A", m_galacticSearchTrajectoryCommands[2]);
+      //m_autoChooser.addOption("GS-Red-B", m_galacticSearchTrajectoryCommands[3]);
+      //m_autoChooser.addOption("GS-Blue-A", m_galacticSearchTrajectoryCommands[0]);
+      //m_autoChooser.addOption("GS-Blue-B", m_galacticSearchTrajectoryCommands[1]);
     }
   
-    public static String getAutoChooserOption(){
-      Command selectedCommand = m_autoChooser.getSelected();
-      if(selectedCommand != null){
-        return selectedCommand.getName();
-      }
-      return null;
-    }
+    // public static String getAutoChooserOption(){
+    //   Command selectedCommand = m_autoChooser.getSelected();
+    //   if(selectedCommand != null){
+    //     return selectedCommand.getName();
+    //   }
+    //   return null;
+    // }
 }

@@ -9,23 +9,22 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.AcquisitionSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 
-public class ShootThreeDrumCommand extends CommandBase {
-  /** Creates a new ShootThreeDrumCommand. */
+public class ShootCommand extends CommandBase {
+  /** Creates a new ShootCommand. */
 
   private StorageSubsystem m_storageSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
-  private AcquisitionSubsystem m_acquisitionSubsystem;
   private int m_timesShot;
   private boolean m_isBopping;
+  private int m_numOfShots;
 
-  public ShootThreeDrumCommand(ShooterSubsystem shooterSubsystem, StorageSubsystem storageSubsystem, AcquisitionSubsystem acquisitionSubsystem) {
+  public ShootCommand(ShooterSubsystem shooterSubsystem, StorageSubsystem storageSubsystem, int numOfShots) {
     m_storageSubsystem = storageSubsystem;
     m_shooterSubsystem = shooterSubsystem;
-    m_acquisitionSubsystem = acquisitionSubsystem;
+    m_numOfShots = numOfShots;
   }
 
   // Called when the command is initially scheduled.
@@ -40,24 +39,20 @@ public class ShootThreeDrumCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(!m_isBopping && m_storageSubsystem.getDrumMotor().getSpeed() == 0) {
-      System.out.println("Running the thing");
-      m_isBopping = true;
-      new SequentialCommandGroup(
-        RobotContainer.getBopperCommand(),//.andThen(() -> m_isBopping = false),
-        new WaitCommand(0.5)
-        .andThen(() -> {
-          m_isBopping = false;
-          m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST);
-          m_timesShot++;
-        })
-      ).schedule();
-      // RobotContainer.getBopperCommand()
-      // .andThen(() -> {
-      //   m_isBopping = false;
-      //   m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST);
-      //   m_timesShot++;
-      // }).schedule();
+    if(m_shooterSubsystem.isShooterMotorUpToSpeed()) {
+      if(!m_isBopping && m_storageSubsystem.getDrumMotor().getSpeed() == 0) {
+        //System.out.println("Running the thing");
+        m_isBopping = true;
+        new SequentialCommandGroup(
+          RobotContainer.getBopperCommand(),//.andThen(() -> m_isBopping = false),
+          new WaitCommand(0.3)
+          .andThen(() -> {
+            m_isBopping = false;
+            m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST);
+            m_timesShot++;
+          })
+        ).schedule();
+      }
     }
   }
 
@@ -67,13 +62,12 @@ public class ShootThreeDrumCommand extends CommandBase {
     m_shooterSubsystem.setIsShooting(false);
     m_storageSubsystem.stopDrumMotor();
     m_shooterSubsystem.stopShooterMotor();
-    RobotContainer.getDrivebaseSubsystem().allowDriving(true);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_timesShot == 3) {
+    if(m_timesShot == m_numOfShots) {
       return true;
     }
     return false;

@@ -56,13 +56,13 @@ public class TargetCorrectionCommand extends CommandBase {
 
             if(magnitude > Constants.TC_LOWER_MAGNITUDE_BOUND) { // If the magnitude is between 480 and 5 the robot turns fast
                 if(diff > 0) {
-                   // System.out.println("Turn left fast");
+                    //System.out.println("Turn left fast");
                     m_drivebaseSubsystem.turnLeft(Constants.TC_TURN_FAST_SPEED);
                 } else {
                     //System.out.println("Turn right fast");
                     m_drivebaseSubsystem.turnRight(Constants.TC_TURN_FAST_SPEED);
                 }
-            } else { // If the magnitude is less than 5
+            } else {  //If the magnitude is less than 5
 
                 if (diff > 1 && !matchedLines) { 
                     //System.out.println("Turn left slow");
@@ -82,12 +82,10 @@ public class TargetCorrectionCommand extends CommandBase {
                     }
 
                     if(RobotContainer.getShooterSubsystem().isShooterMotorUpToSpeed()) {
-                        //RobotContainer.getShootEntireDrumCommand().schedule();
                         new SequentialCommandGroup(
                             new WaitCommand(0.25),
-                            RobotContainer.getShootThreeDrumCommand()
+                            RobotContainer.getShootCommand(5)
                         ).schedule();
-                        //RobotContainer.getShootThreeDrumCommand().schedule();
                         return true;
                     } else {
                         //System.out.println("Waiting for shooter motor to come up to speed");
@@ -107,6 +105,6 @@ public class TargetCorrectionCommand extends CommandBase {
     public void end(boolean interuppted){
         //m_drivebaseSubsystem.stop();
         m_drivebaseSubsystem.setCoastMode();
-        //m_drivebaseSubsystem.allowDriving(true);
+        m_drivebaseSubsystem.allowDriving(true);
     }
   }

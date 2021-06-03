@@ -18,25 +18,15 @@ public class StorageSubsystem extends SubsystemBase {
     private ShooterSubsystem m_shooterSubsystem;
     private boolean m_doIndexing;
     private Compressor m_compressor;
-    private int m_timesDrumsStopped;
     
     public StorageSubsystem(ShooterSubsystem shooterSubsystem) {
         register();
-
-        m_timesDrumsStopped = 0;
 
         m_drumSparkMotor = new Spark(Constants.DRUM_SPARK_PWM_ID);
         m_spinningBarMotor = new WPI_TalonSRX(Constants.SPINNING_BAR_MOTOR_CAN_ID);
 
         m_drumShooterPositionInput = new CT_DigitalInput(Constants.SHOOTER_POSITION_DIO);
-        m_drumShooterPositionInput.setAutomaticInterrupt(() -> {
-            //m_timesDrumsStopped++;
-            stopDrumMotor();
-            // if(m_timesDrumsStopped <= 3) {
-            //     RobotContainer.getBopperCommand()
-            //     .andThen(() -> startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST)).schedule();
-            // }
-        }, true);
+        m_drumShooterPositionInput.setInterrupt(() -> stopDrumMotor(), false, true);
         m_compressor = new Compressor();
         
         m_doIndexing = false;

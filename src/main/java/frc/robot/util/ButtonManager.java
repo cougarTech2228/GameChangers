@@ -85,7 +85,7 @@ public class ButtonManager {
 
         bButton.toggleWhenPressed(
             new SequentialCommandGroup(
-                new InstantCommand(() -> m_acquisitionSubsystem.deployAcquirer(true)),
+                new InstantCommand(() -> m_acquisitionSubsystem.deployAcquirer(false)),
                 new WaitCommand(0.5),
                 new TargetCorrectionCommand(
                     RobotContainer.getDrivebaseSubsystem(), 
@@ -109,6 +109,28 @@ public class ButtonManager {
             )
         );
 
+        yButton.whenPressed(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> {
+                    m_acquisitionSubsystem.deployAcquirer(false);
+                    m_storageSubsystem.stopDrumMotor();
+                    m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
+                }),
+                RobotContainer.getShootCommand(1)
+            )
+        );
+
+        xButton.whenPressed(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> {
+                    m_acquisitionSubsystem.deployAcquirer(false);
+                    m_storageSubsystem.stopDrumMotor();
+                    m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
+                }),
+                RobotContainer.getShootCommand(5)
+            )
+        );
+
         // ---------------- Diagnostic Buttons ----------------
         // Allocate available buttons when testing
 
@@ -116,7 +138,7 @@ public class ButtonManager {
         // bButton.whenPressed(new InstantCommand(() -> m_lidarManager.getLidar().reset()));
 
         // Index Drum
-        //bButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)).beforeStarting(() -> m_storageSubsystem.doIndexing(true)));
+        //xButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)).beforeStarting(() -> m_storageSubsystem.doIndexing(true)));
         
         // Start Drum
         //xButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_VERY_SLOW)));
