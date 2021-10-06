@@ -46,6 +46,20 @@ public class ButtonManager {
         Button dpadDown = new Button(OI::getXboxDpadDown);
         Button dpadLeft = new Button(OI::getXboxDpadLeft);
         Button dpadRight = new Button(OI::getXboxDpadRight);
+        Button startButton = new Button(OI::getXboxStartButton);
+        Button backButton = new Button(OI::getXboxBackButton);
+
+        backButton.whenPressed(
+            new InstantCommand(() -> {
+                RobotContainer.getStorageSubsystem().getCompressor().stop();
+            })
+        );
+
+        startButton.whenPressed(
+            new InstantCommand(() -> {
+                RobotContainer.getStorageSubsystem().getCompressor().start();
+            })
+        );
 
         // Reverses the acquirer only if the acquirer is deployed
         rightTrigger.whenPressed(
@@ -112,7 +126,7 @@ public class ButtonManager {
         yButton.whenPressed(
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
-                    m_acquisitionSubsystem.deployAcquirer(false);
+                    //m_acquisitionSubsystem.deployAcquirer(false);
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
                 }),
@@ -123,7 +137,7 @@ public class ButtonManager {
         xButton.whenPressed(
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
-                    m_acquisitionSubsystem.deployAcquirer(false);
+                    //m_acquisitionSubsystem.deployAcquirer(false);
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
                 }),
@@ -141,10 +155,10 @@ public class ButtonManager {
         //xButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)).beforeStarting(() -> m_storageSubsystem.doIndexing(true)));
         
         // Start Drum
-        //xButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_VERY_SLOW)));
+        leftBumper.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)));
 
         // Stop Drum
-        //yButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.stopDrumMotor()));
+        leftTrigger.whenPressed(new InstantCommand(() -> m_storageSubsystem.stopDrumMotor()));
 
         // Start Bar Motor
         // bButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startBarMotor()));

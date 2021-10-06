@@ -148,7 +148,16 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         //System.out.println("Auto: " + m_autoChooser.getSelected().getName());
-        return m_basicTrajectoryCommand;
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> {
+                m_storageSubsystem.stopDrumMotor();
+                m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
+            }),
+            RobotContainer.getShootCommand(3),
+            m_basicTrajectoryCommand
+        );
+        
+        
     }
 
     // Shooting Commands

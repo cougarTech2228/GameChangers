@@ -19,13 +19,13 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class ShooterMotor extends WPI_TalonSRX {
 
     private boolean m_encodersAreAvailable;
-    //private NetworkTableEntry m_velocityEntry;
+    private NetworkTableEntry m_velocityEntry;
 
     public ShooterMotor() {
         
         super(Constants.SHOOTER_CAN_ID);
         
-        //m_velocityEntry = Shuffleboard.getTab("Shooter Velocity Adjuster").add("Shooter Velocity", 1).getEntry();
+        m_velocityEntry = Shuffleboard.getTab("Shooter Velocity Adjuster").add("Shooter Velocity", 1).getEntry();
         
         configFactoryDefault();
 
@@ -71,7 +71,7 @@ public class ShooterMotor extends WPI_TalonSRX {
         }
 
         // Shuffleboard velocity
-        // set(ControlMode.Velocity, m_velocityEntry.getDouble(1));
+        //set(ControlMode.Velocity, m_velocityEntry.getDouble(1));
     }
 
     public double getFormulaVelocity() {

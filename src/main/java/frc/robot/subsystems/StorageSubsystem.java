@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -26,7 +27,7 @@ public class StorageSubsystem extends SubsystemBase {
         m_spinningBarMotor = new WPI_TalonSRX(Constants.SPINNING_BAR_MOTOR_CAN_ID);
 
         m_drumShooterPositionInput = new CT_DigitalInput(Constants.SHOOTER_POSITION_DIO);
-        m_drumShooterPositionInput.setInterrupt(() -> stopDrumMotor(), false, true);
+        m_drumShooterPositionInput.setInterrupt(() -> stopDrumMotor(), true, false);
         m_compressor = new Compressor();
         
         m_doIndexing = false;
@@ -40,7 +41,7 @@ public class StorageSubsystem extends SubsystemBase {
         };
 
         // Only index the drum when the robot is either shooting or is instructed to through manual indexing (changing of the m_doIndexing variable)
-        m_drumShooterPositionInput.onlyHandleInterruptsWhen(drumConditions);
+        //m_drumShooterPositionInput.onlyHandleInterruptsWhen(drumConditions);
     }
 
     public Compressor getCompressor() {
@@ -55,9 +56,9 @@ public class StorageSubsystem extends SubsystemBase {
      * Starts the drum spark motor
      */
     public void startDrumMotor(double velocity) {
-        //System.out.println("start drum motor");
+        System.out.println("start drum motor");
         m_drumSparkMotor.set(-velocity);
-        startBarMotor();
+        //startBarMotor();
     }
 
     /**
