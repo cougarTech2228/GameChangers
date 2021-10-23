@@ -12,8 +12,23 @@ public class CT_DigitalInput extends DigitalInput {
     private boolean m_negateLogic;
     private boolean m_doBeginningEdge;
     private int m_amountOfEdgesSeen;
-
     private double m_startTime;
+
+    private double m_ignoringInterruptIteration;
+    private boolean m_needToRelatchInterrupt;
+
+    private boolean m_handleInterrupts;
+    
+    /**
+     * The sole reason for seperate interrupt "state" flags (m_handleInterrupts and m_isInterruptLatched)
+     * is so that there are seperate flags for simply handing the interrupt on conditions and doing relatively
+     * complex logic within this class. Having the same variable for EVERY method to alter saw inconsistent and 
+     * incorrect results, leading to that single flag being altered at inconsistent times when it probably should/shouldn't
+     * be. Additionally, the m_isInterruptLatched is more a replacement for calling enable/disableInterrupts, 
+     * while m_handleInterrupts is, as the name suggests, handling them not and necessarily enabling/disabling them alltogether. 
+     * There might be a way to simplify the flags down to one, but for now handleInterrupts will be with the
+     * onlyHandleInterruptsWhen method and everything else will use m_isInterruptLatched. 
+     */
 
     /**
      * Negate logic is useful if you want to reverse the output of getStatus(). A use for setting this variable true
@@ -69,6 +84,9 @@ public class CT_DigitalInput extends DigitalInput {
         m_isInterruptLatched = false;
         m_amountOfEdgesSeen = 0;
         m_startTime = 0;
+        m_ignoringInterruptIteration = 0;
+        m_needToRelatchInterrupt = false;
+        m_handleInterrupts = false;
     }
 
     /**
@@ -136,7 +154,7 @@ public class CT_DigitalInput extends DigitalInput {
 
             @Override
             public void interruptFired(int interruptAssertedMask, Object param) {
-                if(m_isInterruptLatched) {
+                if(m_isInterruptLatched && m_handleInterrupts) {
                     runnable.run();
                 } else { /* Do Nothing */ }
 
@@ -152,7 +170,8 @@ public class CT_DigitalInput extends DigitalInput {
 
         setUpSourceEdge(interruptOnRisingEdge, interruptOnFallingEdge);
         enableInterrupts();
-        m_isInterruptLatched = true;
+        setInterruptLatched(true);
+        m_handleInterrupts = true;
     }
 
     /**
@@ -163,7 +182,7 @@ public class CT_DigitalInput extends DigitalInput {
      * @param runnable the runnable that will run when the interrupt is fired.
      * @param interruptOnRisingEdge fire interrupt on the rising edge.
      * @param interruptOnFallingEdge fire interrupt on the falling edge.
-     * @param time time in seconds for the interrupt to be ignored after activating.
+     * @param time time in seconds for the interrupt to be ignored after the interupt is activated.
      */
     public void setTimedInterrupt(Runnable runnable, boolean interruptOnRisingEdge, boolean interruptOnFallingEdge, double time) {
 
@@ -172,8 +191,10 @@ public class CT_DigitalInput extends DigitalInput {
             @Override
             public void interruptFired(int interruptAssertedMask, Object param) {
                 if((Timer.getFPGATimestamp() - m_startTime) >= time) {
-                    if(m_isInterruptLatched) {
+                    if(m_isInterruptLatched && m_handleInterrupts) {
                         runnable.run();
+                        System.out.println("FPGA Time: " + Timer.getFPGATimestamp());
+                        System.out.println("Start Time: " + m_startTime);
                         m_startTime = Timer.getFPGATimestamp();
                     } else { /* Do Nothing */ }
                 }
@@ -191,6 +212,7 @@ public class CT_DigitalInput extends DigitalInput {
         setUpSourceEdge(interruptOnRisingEdge, interruptOnFallingEdge);
         enableInterrupts();
         m_isInterruptLatched = true;
+        m_handleInterrupts = true;
     }
 
     /**
@@ -211,7 +233,7 @@ public class CT_DigitalInput extends DigitalInput {
         requestInterrupts(new InterruptHandlerFunction<Object>() {
             @Override
             public void interruptFired(int interruptAssertedMask, Object param) {
-                if(m_isInterruptLatched) {
+                if(m_isInterruptLatched && m_handleInterrupts) {
                     boolean wasRisingEdge = true;
                     if((interruptAssertedMask & 0x0100) == 0x0100) {
                         wasRisingEdge = false;
@@ -250,9 +272,38 @@ public class CT_DigitalInput extends DigitalInput {
         setUpSourceEdge(true, true);
         enableInterrupts();
         m_isInterruptLatched = true;
+        m_handleInterrupts = true;
     }
 
-    //public void setTimedInterrupt(Runnable runnable, )
+    /**
+     * This method is for if you want to ignore interrupts after a certain action as taken place.
+     * Use this method in a periodic to gain full effect as it relies on iteration to count time.
+     * Use this method in conjunction with ignoreInterruptsNow().
+     * 
+     * @param seconds time in seconds interrupts will be ignored after ignoreInterruptsNow() is called.
+     */
+    public void ignoreInterruptsFor(double seconds) {
+        if(m_needToRelatchInterrupt) {
+            m_ignoringInterruptIteration++;
+
+            if(m_ignoringInterruptIteration >= (seconds * 50)) {
+                //System.out.println("Interrupts can now be seen");
+                setInterruptLatched(true);
+                m_needToRelatchInterrupt = false;
+                m_ignoringInterruptIteration = 0;
+            }
+        }
+    }
+
+    /**
+     * This method works with the ignoreInterruptsFor() method, which should be called in a periodic.
+     * Call this method when you want interrupts to be ignored for the amount of time passed into ignoreInterruptsFor()
+     */
+    public void ignoreInterruptsNow() {
+        //System.out.println("Ignoring Interrupts");
+        setInterruptLatched(false);
+        m_needToRelatchInterrupt = true;
+    }
 
     /**
      * Enables the interrupts when all of the conditions are true.
@@ -260,20 +311,22 @@ public class CT_DigitalInput extends DigitalInput {
      * @param conditions the conditions to be met for the interrupt to be activated. 
      */
     public void onlyHandleInterruptsWhen(boolean... conditions) {
-        if (isAllTrue(conditions)) {
-            m_isInterruptLatched = true;
-        } else {
-            m_isInterruptLatched = false;
-        }
+        m_handleInterrupts = isAllTrue(conditions);
     }
 
     /**
      * Setter method for the latch interrupt variable. Will decide if said interrupt will be run or not.
      * 
-     * @param latchInterupt boolean variable to be set to m_isInterruptLatched
+     * @param latchInterrupt boolean variable to be set to m_isInterruptLatched
      */
-    public void setInterruptLatched(boolean latchInterupt) {
-        m_isInterruptLatched = latchInterupt;
+    private void setInterruptLatched(boolean latchInterrupt) {
+        if(latchInterrupt != m_isInterruptLatched)
+            System.out.println("Interrupt Latched was: " + m_isInterruptLatched);
+        m_isInterruptLatched = latchInterrupt;
+    }
+
+    public boolean isInterruptLatched() {
+        return m_isInterruptLatched;
     }
 
     /**

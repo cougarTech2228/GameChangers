@@ -55,10 +55,9 @@ public class RobotContainer {
 
     private final static ButtonManager m_buttonManager = new ButtonManager(m_shooterSubsystem, m_storageSubsystem, m_acquisitionSubsystem);
 
-    private final static TrajectoryManager m_trajectoryManager = new TrajectoryManager(m_storageSubsystem, m_acquisitionSubsystem);
+    public static int m_robotState = 0;
 
     private final static SendableChooser<Double> m_manualVelocityChooser = new SendableChooser<>();
-    //private final static SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
     private static Command m_basicTrajectoryCommand;
     private static Command m_barrelRacingTrajectoryCommand;
@@ -77,8 +76,8 @@ public class RobotContainer {
 
         // The import of trajectories from PathWeaver-generated json files can be very
         // time consuming so we're putting the Trajectory Manager into a thread.
-        Thread trajectoryManagerThread = new Thread(m_trajectoryManager);
-        trajectoryManagerThread.start();
+        //Thread trajectoryManagerThread = new Thread(m_trajectoryManager);
+        //trajectoryManagerThread.start();
 
         Thread lidarManagerThread = new Thread(m_lidarManager);
         lidarManagerThread.start();

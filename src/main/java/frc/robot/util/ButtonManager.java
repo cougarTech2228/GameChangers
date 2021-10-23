@@ -85,28 +85,18 @@ public class ButtonManager {
             new SelectCommand(
                 Map.ofEntries(
                     Map.entry(true, new InstantCommand(() -> {
+                                        RobotContainer.m_robotState = Constants.IDLE_STATE;
                                         m_acquisitionSubsystem.retractAcquirer();
                                         m_storageSubsystem.stopDrumMotor();
                                     }).withName("Stop Acquirer Motor SeqCommand")),
                     Map.entry(false, new InstantCommand(() -> {
-                                        m_acquisitionSubsystem.deployAcquirer(true);
+                                        RobotContainer.m_robotState = Constants.ACQUIRING_STATE;
+                                        m_acquisitionSubsystem.deployAcquirer(false);
                                         m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW);
                                     }).withName("Start Acquirer Motor SeqCommand"))
                 ),
                 m_acquisitionSubsystem::isAcquirerDeployed
             ).withName("Acquirer Select Command")
-        );
-
-        bButton.toggleWhenPressed(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> m_acquisitionSubsystem.deployAcquirer(false)),
-                new WaitCommand(0.5),
-                new TargetCorrectionCommand(
-                    RobotContainer.getDrivebaseSubsystem(), 
-                    RobotContainer.getAcquisitionSubsystem(),
-                    RobotContainer.getShooterSubsystem()
-                ).beforeStarting(() -> m_storageSubsystem.stopDrumMotor())
-            ), true
         );
 
         aButton.whenPressed(
@@ -127,6 +117,7 @@ public class ButtonManager {
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
                     //m_acquisitionSubsystem.deployAcquirer(false);
+                    RobotContainer.m_robotState = Constants.SHOOTING_STATE;
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
                 }),
@@ -138,12 +129,33 @@ public class ButtonManager {
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
                     //m_acquisitionSubsystem.deployAcquirer(false);
+                    RobotContainer.m_robotState = Constants.SHOOTING_STATE;
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
                 }),
                 RobotContainer.getShootCommand(5)
             )
         );
+
+        dpadUp.whenPressed(new InstantCommand(() -> {
+            
+            if(m_shooterSubsystem.m_targetDistance == 25) { // Cant go above max distance (25)
+                RobotContainer.getRumbleCommand(0.1).schedule();; // 
+            } else {
+                m_shooterSubsystem.m_targetDistance += 5;
+            }
+            
+        }));
+
+        dpadDown.whenPressed(new InstantCommand(() -> {
+            
+            if(m_shooterSubsystem.m_targetDistance == 10) {
+                RobotContainer.getRumbleCommand(0.1).schedule();;
+            } else {
+                m_shooterSubsystem.m_targetDistance -=5;
+            }
+            
+        }));
 
         // ---------------- Diagnostic Buttons ----------------
         // Allocate available buttons when testing
@@ -155,7 +167,7 @@ public class ButtonManager {
         //xButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)).beforeStarting(() -> m_storageSubsystem.doIndexing(true)));
         
         // Start Drum
-        leftBumper.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)));
+        leftBumper.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST)));
 
         // Stop Drum
         leftTrigger.whenPressed(new InstantCommand(() -> m_storageSubsystem.stopDrumMotor()));

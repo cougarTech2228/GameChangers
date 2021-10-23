@@ -30,7 +30,7 @@ public class ShootCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooterSubsystem.setIsShooting(true);
+    //m_shooterSubsystem.setIsShooting(true);
     m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST);
     m_timesShot = 0;
     m_isBopping = false;
@@ -41,12 +41,13 @@ public class ShootCommand extends CommandBase {
   public void execute() {
     if(m_shooterSubsystem.isShooterMotorUpToSpeed()) {
       if(!m_isBopping && m_storageSubsystem.getDrumMotor().getSpeed() == 0) {
-        //System.out.println("Running the thing");
+        //System.out.println("Going to bop, reached next index and motor is up to speed");
         m_isBopping = true;
         new SequentialCommandGroup(
           RobotContainer.getBopperCommand(),//.andThen(() -> m_isBopping = false),
-          new WaitCommand(0.3)
+          new WaitCommand(0.7)
           .andThen(() -> {
+           // System.out.println("After 0.7 wait");
             m_isBopping = false;
             m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST);
             m_timesShot++;
@@ -59,7 +60,8 @@ public class ShootCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterSubsystem.setIsShooting(false);
+    RobotContainer.m_robotState = Constants.IDLE_STATE;
+    //m_shooterSubsystem.setIsShooting(false);
     m_storageSubsystem.stopDrumMotor();
     m_shooterSubsystem.stopShooterMotor();
   }

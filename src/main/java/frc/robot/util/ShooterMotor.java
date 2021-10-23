@@ -59,16 +59,17 @@ public class ShooterMotor extends WPI_TalonSRX {
      * Start the shooter motor
      */
     public void start(ShooterSubsystem shooterSubsystem) {
-        double velocity = getFormulaVelocity();
+        RobotContainer.getShooterSubsystem().setIsShooting(true);
+        double velocity = getVelocity();
         System.out.println("Setting velocity to: " + velocity);
         
         set(ControlMode.Velocity, velocity);
 
-        if(velocity == 0) { // If the distance was outside the boundaries
-            RobotContainer.getRumbleCommand(0.5).schedule();
-        } else {
-            shooterSubsystem.setIsShooting(true);
-        }
+        // if(velocity == 0) { // If the distance was outside the boundaries
+        //     RobotContainer.getRumbleCommand(0.5).schedule();
+        // } else {
+        //     shooterSubsystem.setIsShooting(true);
+        // }
 
         // Shuffleboard velocity
         //set(ControlMode.Velocity, m_velocityEntry.getDouble(1));
@@ -84,5 +85,17 @@ public class ShooterMotor extends WPI_TalonSRX {
             return 0;
         }
         
+    }
+
+    public double getVelocity() {
+        int distance = RobotContainer.getShooterSubsystem().m_targetDistance;
+
+            switch(distance) {
+                case 10: return 67156;
+                case 15: return 66556;
+                case 20: return 72840;
+                case 25: return 82500;
+                default: System.out.println("Incorrect distance created"); return 0; // Keep this 0 
+            }
     }
 }

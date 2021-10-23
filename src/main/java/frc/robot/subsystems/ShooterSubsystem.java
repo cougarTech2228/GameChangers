@@ -13,6 +13,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private Solenoid m_bopper;
     private boolean m_isShooting;
     private boolean m_isMotorUpToSpeed;
+    public int m_targetDistance;
 
     public ShooterSubsystem() {
         register();
@@ -22,20 +23,22 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_isShooting = false;
         m_isMotorUpToSpeed = false;
+        m_targetDistance = 10;
         
     }
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Target Distance", m_targetDistance);
         SmartDashboard.putNumber("Shooter Velocity", m_shooterMotor.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("Calculated velocity", m_shooterMotor.getFormulaVelocity());
+        SmartDashboard.putNumber("Calculated velocity", m_shooterMotor.getVelocity());
         SmartDashboard.putBoolean("Is Robot Shooting", m_isShooting);
         SmartDashboard.putNumber("Lidar Distance: ", RobotContainer.getLidarManager().getLidarAverage());
         SmartDashboard.putBoolean("Is shooter motor up to speed", m_isMotorUpToSpeed);
 
         m_isMotorUpToSpeed = false;
         if(m_isShooting) {
-            if((m_shooterMotor.getSelectedSensorVelocity() + 2000) >= m_shooterMotor.getFormulaVelocity()) {
+            if((m_shooterMotor.getSelectedSensorVelocity() + 4000) >= m_shooterMotor.getVelocity()) {
                 m_isMotorUpToSpeed = true;
             } else {
                 m_isMotorUpToSpeed = false;

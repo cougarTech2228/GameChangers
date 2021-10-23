@@ -20,10 +20,9 @@ package frc.robot;
 public final class Constants {
 
 	public static final int CONTROL_PANEL_INTERRUPT_DIO = 0;
-	public static final int ACQUIRE_POSITION_DIO = 4;
 	public static final int ACQUIRE_BALL_DIO = 2;
 	public static final int SHOOTER_BALL_DIO = 3;
-	public static final int SHOOTER_POSITION_DIO = 1;
+	public static final int SHOOTER_POSITION_DIO = 4;
 	public static final int CLIMBER_UPPER_PROX_DIO = 5;
 	public static final int CLIMBER_LOWER_PROX_DIO = 6;
 	public static final int DIGITAL_IO_7 = 7;
@@ -165,4 +164,9 @@ public final class Constants {
 	public final static int kSlot_MotProf = SLOT_3;
 
 	public static final double ACQUIRER_MOTOR_SPEED = 0.70;
+
+	public static final int IDLE_STATE = 0; // Not acquiring or shooting
+	public static final int ACQUIRING_STATE = 1;
+	public static final int SHOOTING_STATE = 2;
+	public static final int TEST_STATE = 3;
 }
