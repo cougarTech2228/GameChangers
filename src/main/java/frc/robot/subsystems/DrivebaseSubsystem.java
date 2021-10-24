@@ -372,4 +372,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
 		m_rightMaster.set(speed);
 		m_leftMaster.set(-speed);
 	}
+
+	public void driveBackwards() {
+		m_rightMaster.set(0.2);
+		m_leftMaster.set(0.2);
+	}
 }

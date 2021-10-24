@@ -62,7 +62,6 @@ public class StorageSubsystem extends SubsystemBase {
      * Starts the drum spark motor
      */
     public void startDrumMotor(double velocity) {
-        System.out.println("start drum motor");
         m_drumSparkMotor.set(-velocity);
         startBarMotor();
 

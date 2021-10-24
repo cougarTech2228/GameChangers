@@ -13,6 +13,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private Solenoid m_bopper;
     private boolean m_isMotorUpToSpeed;
     public int m_targetDistance;
+    public String m_target;
 
     public ShooterSubsystem() {
         register();
@@ -22,12 +23,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_isMotorUpToSpeed = false;
         m_targetDistance = 10;
+        m_target = "Line";
         
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Target Distance", m_targetDistance);
+        SmartDashboard.putString("Target ", m_target);
         SmartDashboard.putNumber("Shooter Velocity", m_shooterMotor.getSelectedSensorVelocity());
         SmartDashboard.putNumber("Calculated velocity", m_shooterMotor.getVelocity());
         SmartDashboard.putNumber("Lidar Distance: ", RobotContainer.getLidarManager().getLidarAverage());
@@ -40,6 +42,14 @@ public class ShooterSubsystem extends SubsystemBase {
             } else {
                 m_isMotorUpToSpeed = false;
             }
+        }
+
+        if(m_targetDistance == 5) {
+            m_target = "Point Blank";
+        } else if (m_targetDistance == 10) {
+            m_target = "Line";
+        } else {
+            m_target = "Behind Line";
         }
 
         //System.out.println("Is shooter motor up to speed? " + m_isMotorUpToSpeed);

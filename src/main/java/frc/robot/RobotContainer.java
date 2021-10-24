@@ -45,7 +45,6 @@ public class RobotContainer {
 
     // TrajectoryManager must be instantiated after DrivebaseSubsystem since it
     // relies on it
-    
 
     private final static VisionSubsystem m_visionSubsystem = new VisionSubsystem();
     private final static LidarManager m_lidarManager = new LidarManager();
@@ -152,8 +151,10 @@ public class RobotContainer {
                 m_storageSubsystem.stopDrumMotor();
                 m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
             }),
-            RobotContainer.getShootCommand(3),
-            m_basicTrajectoryCommand
+            RobotContainer.getShootCommand(5),
+            new InstantCommand(() -> m_drivebaseSubsystem.driveBackwards()),
+            new WaitCommand(1),
+            new InstantCommand(() -> m_drivebaseSubsystem.stop())
         );
         
         

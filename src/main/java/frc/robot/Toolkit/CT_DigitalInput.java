@@ -193,8 +193,6 @@ public class CT_DigitalInput extends DigitalInput {
                 if((Timer.getFPGATimestamp() - m_startTime) >= time) {
                     if(m_isInterruptLatched && m_handleInterrupts) {
                         runnable.run();
-                        System.out.println("FPGA Time: " + Timer.getFPGATimestamp());
-                        System.out.println("Start Time: " + m_startTime);
                         m_startTime = Timer.getFPGATimestamp();
                     } else { /* Do Nothing */ }
                 }
@@ -320,11 +318,13 @@ public class CT_DigitalInput extends DigitalInput {
      * @param latchInterrupt boolean variable to be set to m_isInterruptLatched
      */
     private void setInterruptLatched(boolean latchInterrupt) {
-        if(latchInterrupt != m_isInterruptLatched)
-            System.out.println("Interrupt Latched was: " + m_isInterruptLatched);
         m_isInterruptLatched = latchInterrupt;
     }
 
+    /**
+     * Returns if the interrupt is latched
+     * @return if the interrupt is latched
+     */
     public boolean isInterruptLatched() {
         return m_isInterruptLatched;
     }

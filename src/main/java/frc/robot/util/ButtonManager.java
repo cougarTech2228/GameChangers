@@ -90,7 +90,7 @@ public class ButtonManager {
                                     }).withName("Stop Acquirer Motor SeqCommand")),
                     Map.entry(false, new InstantCommand(() -> {
                                         RobotContainer.m_robotState = Constants.ACQUIRING_STATE;
-                                        m_acquisitionSubsystem.deployAcquirer(false);
+                                        m_acquisitionSubsystem.deployAcquirer(true);
                                         m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW);
                                     }).withName("Start Acquirer Motor SeqCommand"))
                 ),
@@ -117,7 +117,6 @@ public class ButtonManager {
                     if(m_acquisitionSubsystem.isAcquirerDeployed()) {
                         m_acquisitionSubsystem.retractAcquirer();
                     }
-                    RobotContainer.m_robotState = Constants.SHOOTING_STATE;
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
                 }),
@@ -131,7 +130,6 @@ public class ButtonManager {
                     if(m_acquisitionSubsystem.isAcquirerDeployed()) {
                         m_acquisitionSubsystem.retractAcquirer();
                     }
-                    RobotContainer.m_robotState = Constants.SHOOTING_STATE;
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
                 }),
@@ -141,7 +139,7 @@ public class ButtonManager {
 
         dpadUp.whenPressed(new InstantCommand(() -> {
             
-            if(m_shooterSubsystem.m_targetDistance == 25) { // Cant go above max distance (25)
+            if(m_shooterSubsystem.m_targetDistance == 15) { // Cant go above max distance (15)
                 RobotContainer.getRumbleCommand(0.1).schedule();; // 
             } else {
                 m_shooterSubsystem.m_targetDistance += 5;
@@ -151,7 +149,7 @@ public class ButtonManager {
 
         dpadDown.whenPressed(new InstantCommand(() -> {
             
-            if(m_shooterSubsystem.m_targetDistance == 10) {
+            if(m_shooterSubsystem.m_targetDistance == 5) {
                 RobotContainer.getRumbleCommand(0.1).schedule();;
             } else {
                 m_shooterSubsystem.m_targetDistance -=5;

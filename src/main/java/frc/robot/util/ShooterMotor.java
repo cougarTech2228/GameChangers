@@ -62,6 +62,7 @@ public class ShooterMotor extends WPI_TalonSRX {
      * Start the shooter motor
      */
     public void start(ShooterSubsystem shooterSubsystem) {
+        RobotContainer.m_robotState = Constants.SHOOTING_STATE;
         RobotContainer.getStorageSubsystem().getCompressor().stop();
         double velocity = getVelocity();
         System.out.println("Setting velocity to: " + velocity);
@@ -88,10 +89,9 @@ public class ShooterMotor extends WPI_TalonSRX {
         int distance = m_shooterSubsystem.m_targetDistance;
 
             switch(distance) {
-                case 10: return 67156;
-                case 15: return 66556;
-                case 20: return 72840;
-                case 25: return 82500;
+                case 5: return 100000; // Point Blank
+                case 10: return 67156; // At Line
+                case 15: return 76500; // Behind Line
                 default: System.out.println("Incorrect distance created"); return 0; // Keep this 0 
             }
     }
