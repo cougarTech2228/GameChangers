@@ -11,17 +11,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private ShooterMotor m_shooterMotor;
     private Solenoid m_bopper;
-    private boolean m_isShooting;
     private boolean m_isMotorUpToSpeed;
     public int m_targetDistance;
 
     public ShooterSubsystem() {
         register();
 
-        m_shooterMotor = new ShooterMotor();
+        m_shooterMotor = new ShooterMotor(this);
         m_bopper = new Solenoid(Constants.PCM_CAN_ID, Constants.BOPPER_PCM_PORT);
 
-        m_isShooting = false;
         m_isMotorUpToSpeed = false;
         m_targetDistance = 10;
         
@@ -32,12 +30,11 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Target Distance", m_targetDistance);
         SmartDashboard.putNumber("Shooter Velocity", m_shooterMotor.getSelectedSensorVelocity());
         SmartDashboard.putNumber("Calculated velocity", m_shooterMotor.getVelocity());
-        SmartDashboard.putBoolean("Is Robot Shooting", m_isShooting);
         SmartDashboard.putNumber("Lidar Distance: ", RobotContainer.getLidarManager().getLidarAverage());
         SmartDashboard.putBoolean("Is shooter motor up to speed", m_isMotorUpToSpeed);
 
         m_isMotorUpToSpeed = false;
-        if(m_isShooting) {
+        if(RobotContainer.m_robotState == Constants.SHOOTING_STATE) {
             if((m_shooterMotor.getSelectedSensorVelocity() + 4000) >= m_shooterMotor.getVelocity()) {
                 m_isMotorUpToSpeed = true;
             } else {
@@ -72,19 +69,9 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @return boolean isShooting
      */
-    public boolean isShooting() {
-        return m_isShooting;
-    }
-
-    /**
-     * Sets isShooting to the passed in value
-     * 
-     * @param isShooting
-     */
-    public void setIsShooting(boolean isShooting) {
-        //System.out.println("Setting is shooting to: " + isShooting);
-        m_isShooting = isShooting;
-    }
+    // public boolean isShooting() {
+    //     return m_isShooting;
+    // }
 
     /**
      * Starts the shooter motor and runs the velocity adjustment command
@@ -101,9 +88,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * acquire position.
      */
     public void stopShooterMotor() {
-        RobotContainer.getStorageSubsystem().getCompressor().start();
+        //RobotContainer.getStorageSubsystem().getCompressor().start();
         m_shooterMotor.stopMotor();
-        m_isShooting = false;
     }
 
     /**

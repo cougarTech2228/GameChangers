@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.RobotContainer;
-import frc.robot.commands.TargetCorrectionCommand;
 import frc.robot.subsystems.AcquisitionSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
@@ -103,10 +102,9 @@ public class ButtonManager {
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
                     OI.setXboxRumbleStop();
-                    m_shooterSubsystem.setIsShooting(false);
+                    RobotContainer.m_robotState = Constants.IDLE_STATE;
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.stopShooterMotor();
-                    RobotContainer.getDrivebaseSubsystem().allowDriving(true);
                     RobotContainer.getDrivebaseSubsystem().stop();
                     CommandScheduler.getInstance().cancelAll();
                 })
@@ -116,7 +114,9 @@ public class ButtonManager {
         yButton.whenPressed(
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
-                    //m_acquisitionSubsystem.deployAcquirer(false);
+                    if(m_acquisitionSubsystem.isAcquirerDeployed()) {
+                        m_acquisitionSubsystem.retractAcquirer();
+                    }
                     RobotContainer.m_robotState = Constants.SHOOTING_STATE;
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
@@ -128,7 +128,9 @@ public class ButtonManager {
         xButton.whenPressed(
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
-                    //m_acquisitionSubsystem.deployAcquirer(false);
+                    if(m_acquisitionSubsystem.isAcquirerDeployed()) {
+                        m_acquisitionSubsystem.retractAcquirer();
+                    }
                     RobotContainer.m_robotState = Constants.SHOOTING_STATE;
                     m_storageSubsystem.stopDrumMotor();
                     m_shooterSubsystem.getShooterMotor().start(m_shooterSubsystem);
@@ -166,6 +168,15 @@ public class ButtonManager {
         // Index Drum
         //xButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)).beforeStarting(() -> m_storageSubsystem.doIndexing(true)));
         
+
+        bButton.whenPressed(new InstantCommand(() -> {
+            if(RobotContainer.m_robotState != Constants.TEST_STATE) {
+                RobotContainer.m_robotState = Constants.TEST_STATE;
+            } else {
+                RobotContainer.m_robotState = Constants.IDLE_STATE;
+            }
+        }));
+
         // Start Drum
         leftBumper.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST)));
 

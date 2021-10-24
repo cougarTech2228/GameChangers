@@ -20,10 +20,13 @@ public class ShooterMotor extends WPI_TalonSRX {
 
     private boolean m_encodersAreAvailable;
     private NetworkTableEntry m_velocityEntry;
+    private ShooterSubsystem m_shooterSubsystem;
 
-    public ShooterMotor() {
+    public ShooterMotor(ShooterSubsystem shooterSubsystem) {
         
         super(Constants.SHOOTER_CAN_ID);
+
+        m_shooterSubsystem = shooterSubsystem;
         
         m_velocityEntry = Shuffleboard.getTab("Shooter Velocity Adjuster").add("Shooter Velocity", 1).getEntry();
         
@@ -59,17 +62,11 @@ public class ShooterMotor extends WPI_TalonSRX {
      * Start the shooter motor
      */
     public void start(ShooterSubsystem shooterSubsystem) {
-        RobotContainer.getShooterSubsystem().setIsShooting(true);
+        RobotContainer.getStorageSubsystem().getCompressor().stop();
         double velocity = getVelocity();
         System.out.println("Setting velocity to: " + velocity);
         
         set(ControlMode.Velocity, velocity);
-
-        // if(velocity == 0) { // If the distance was outside the boundaries
-        //     RobotContainer.getRumbleCommand(0.5).schedule();
-        // } else {
-        //     shooterSubsystem.setIsShooting(true);
-        // }
 
         // Shuffleboard velocity
         //set(ControlMode.Velocity, m_velocityEntry.getDouble(1));
@@ -88,7 +85,7 @@ public class ShooterMotor extends WPI_TalonSRX {
     }
 
     public double getVelocity() {
-        int distance = RobotContainer.getShooterSubsystem().m_targetDistance;
+        int distance = m_shooterSubsystem.m_targetDistance;
 
             switch(distance) {
                 case 10: return 67156;

@@ -169,4 +169,6 @@ public final class Constants {
 	public static final int ACQUIRING_STATE = 1;
 	public static final int SHOOTING_STATE = 2;
 	public static final int TEST_STATE = 3;
+
+	public static final double TIME_TO_WAIT_FOR_DIAL_SLOP = 0.1;
 }

@@ -17,11 +17,8 @@ public class StorageSubsystem extends SubsystemBase {
     private CT_DigitalInput m_shooterPositionInput;
     private Spark m_drumSparkMotor;
     private WPI_TalonSRX m_spinningBarMotor;
-    private ShooterSubsystem m_shooterSubsystem;
-    private boolean m_doIndexing;
     private Compressor m_compressor;
 
-    private double lastTimeStop = 0;
     
     public StorageSubsystem(ShooterSubsystem shooterSubsystem) {
         register();
@@ -30,15 +27,9 @@ public class StorageSubsystem extends SubsystemBase {
         m_spinningBarMotor = new WPI_TalonSRX(Constants.SPINNING_BAR_MOTOR_CAN_ID);
 
         m_shooterPositionInput = new CT_DigitalInput(Constants.SHOOTER_POSITION_DIO);
-        m_shooterPositionInput.setInterrupt(() -> {
-            stopDrumMotor();
-            //System.out.println("Time since last dial stop: " + (Timer.getFPGATimestamp() - lastTimeStop));
-            lastTimeStop = Timer.getFPGATimestamp();
-        }, false, true);
+        m_shooterPositionInput.setInterrupt(() -> stopDrumMotor(), false, true);
         m_compressor = new Compressor();
         
-        m_doIndexing = false;
-        m_shooterSubsystem = shooterSubsystem;
 
     }
 
@@ -47,15 +38,13 @@ public class StorageSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Drum input", m_shooterPositionInput.get());
         SmartDashboard.putBoolean("Is interrupt latched", m_shooterPositionInput.isInterruptLatched());
 
-        //System.out.println(m_shooterPositionInput.get());
-
         boolean[] drumConditions = {
             (RobotContainer.m_robotState == Constants.SHOOTING_STATE 
              || RobotContainer.m_robotState == Constants.TEST_STATE) 
         };
 
         // Ignore interrupts for 0.5 seconds after the dial starts moving to account for the slop in the dial.
-        m_shooterPositionInput.ignoreInterruptsFor(0.5);
+        m_shooterPositionInput.ignoreInterruptsFor(0.35);
 
         // Only index the drum when the robot is either shooting or is instructed to through manual indexing (changing of the m_doIndexing variable)
         m_shooterPositionInput.onlyHandleInterruptsWhen(drumConditions);
@@ -75,7 +64,7 @@ public class StorageSubsystem extends SubsystemBase {
     public void startDrumMotor(double velocity) {
         System.out.println("start drum motor");
         m_drumSparkMotor.set(-velocity);
-        //startBarMotor();
+        startBarMotor();
 
         m_shooterPositionInput.ignoreInterruptsNow();
     }
@@ -94,7 +83,6 @@ public class StorageSubsystem extends SubsystemBase {
         //System.out.println("stop drum motor");
         m_drumSparkMotor.set(0);
         stopBarMotor();
-        doIndexing(false);
     }
 
     /**
@@ -109,16 +97,6 @@ public class StorageSubsystem extends SubsystemBase {
      */
     public void stopBarMotor() {
         m_spinningBarMotor.set(0);
-    }
-
-    /**
-     * Setter method for the m_doIndexing variable which will decide whether or not the dial will index
-     * @param value the value to be set to m_doIndexing
-     */
-    public void doIndexing(boolean value) {
-        //System.out.println("Changing doIndexing from: " + m_doIndexing + "to: " + value);
-        m_doIndexing = value;
-        
     }
 
     /**
