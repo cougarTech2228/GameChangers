@@ -74,16 +74,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Returns the boolean isShooting which determines the state of the drum slot
-     * location
-     * 
-     * @return boolean isShooting
-     */
-    // public boolean isShooting() {
-    //     return m_isShooting;
-    // }
-
-    /**
      * Starts the shooter motor and runs the velocity adjustment command
      */
     public void startShooterMotor() {

@@ -137,7 +137,7 @@ public class ButtonManager {
             )
         );
 
-        dpadUp.whenPressed(new InstantCommand(() -> {
+        dpadDown.whenPressed(new InstantCommand(() -> {
             
             if(m_shooterSubsystem.m_targetDistance == 15) { // Cant go above max distance (15)
                 RobotContainer.getRumbleCommand(0.1).schedule();; // 
@@ -147,7 +147,7 @@ public class ButtonManager {
             
         }));
 
-        dpadDown.whenPressed(new InstantCommand(() -> {
+        dpadUp.whenPressed(new InstantCommand(() -> {
             
             if(m_shooterSubsystem.m_targetDistance == 5) {
                 RobotContainer.getRumbleCommand(0.1).schedule();;
@@ -167,19 +167,19 @@ public class ButtonManager {
         //xButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_SLOW)).beforeStarting(() -> m_storageSubsystem.doIndexing(true)));
         
 
-        bButton.whenPressed(new InstantCommand(() -> {
-            if(RobotContainer.m_robotState != Constants.TEST_STATE) {
-                RobotContainer.m_robotState = Constants.TEST_STATE;
-            } else {
-                RobotContainer.m_robotState = Constants.IDLE_STATE;
-            }
-        }));
+        // bButton.whenPressed(new InstantCommand(() -> {
+        //     if(RobotContainer.m_robotState != Constants.TEST_STATE) {
+        //         RobotContainer.m_robotState = Constants.TEST_STATE;
+        //     } else {
+        //         RobotContainer.m_robotState = Constants.IDLE_STATE;
+        //     }
+        // }));
 
         // Start Drum
-        leftBumper.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST)));
+        //leftBumper.whenPressed(new InstantCommand(() -> m_storageSubsystem.startDrumMotor(Constants.DRUM_MOTOR_VELOCITY_FAST)));
 
         // Stop Drum
-        leftTrigger.whenPressed(new InstantCommand(() -> m_storageSubsystem.stopDrumMotor()));
+        //leftTrigger.whenPressed(new InstantCommand(() -> m_storageSubsystem.stopDrumMotor()));
 
         // Start Bar Motor
         // bButton.whenPressed(new InstantCommand(() -> m_storageSubsystem.startBarMotor()));

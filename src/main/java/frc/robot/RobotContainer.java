@@ -28,7 +28,6 @@ import frc.robot.Toolkit.CT_CommandToggler;
 import frc.robot.util.ButtonManager;
 import frc.robot.util.LidarManager;
 import frc.robot.util.ShooterMotor;
-import frc.robot.util.TrajectoryManager;
 import frc.robot.Toolkit.CT_CommandToggler.CommandState;
 
 /**
@@ -43,9 +42,6 @@ public class RobotContainer {
     // Robot Subsystems
     private final static DrivebaseSubsystem m_drivebaseSubsystem = new DrivebaseSubsystem();
 
-    // TrajectoryManager must be instantiated after DrivebaseSubsystem since it
-    // relies on it
-
     private final static VisionSubsystem m_visionSubsystem = new VisionSubsystem();
     private final static LidarManager m_lidarManager = new LidarManager();
     private final static AcquisitionSubsystem m_acquisitionSubsystem = new AcquisitionSubsystem();
@@ -58,14 +54,6 @@ public class RobotContainer {
 
     private final static SendableChooser<Double> m_manualVelocityChooser = new SendableChooser<>();
 
-    private static Command m_basicTrajectoryCommand;
-    private static Command m_barrelRacingTrajectoryCommand;
-    private static Command m_slalomTrajectoryCommand;
-    private static Command m_bounceTrajectoryCommand;
-    private static Command[] m_galacticSearchTrajectoryCommands;
-    private static Command m_powerTowerCommand = new InstantCommand().withName("Power Tower");
-
-
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -77,9 +65,6 @@ public class RobotContainer {
         // time consuming so we're putting the Trajectory Manager into a thread.
         //Thread trajectoryManagerThread = new Thread(m_trajectoryManager);
         //trajectoryManagerThread.start();
-
-        Thread lidarManagerThread = new Thread(m_lidarManager);
-        lidarManagerThread.start();
 
         // Configure the button and shuffleboard bindings
         m_buttonManager.configureButtonBindings();
@@ -203,34 +188,6 @@ public class RobotContainer {
     // public static LidarSubsystem getLidarSubsystem() {
     //     return m_lidarSubsystem;
     // }
-
-    public static void setBasicTrajectoryCommand(CommandBase command) {
-        m_basicTrajectoryCommand = command.withName("Basic");
-    }
-
-    public static void setBarrelRacingTrajectoryCommand(CommandBase command) {
-        m_barrelRacingTrajectoryCommand = command.withName("Barrel Racing");
-    }
-
-    public static void setSlalomTrajectoryCommand(CommandBase command) {
-        m_slalomTrajectoryCommand = command.withName("Slalom");
-    }
-
-    public static void setBounceTrajectoryCommand(CommandBase command) {
-        m_bounceTrajectoryCommand = command.withName("Bounce");
-    }
-
-    public static void setGalacticSearchTrajectoryCommands(CommandBase[] commands) {
-        // m_galacticSearchTrajectoryCommand = command.withName("Galactic Search").beforeStarting(() -> {
-        //   m_acquisitionSubsystem.deployAcquirer();
-        //   m_acquisitionSubsystem.startAcquirerMotor();
-        // });
-        m_galacticSearchTrajectoryCommands = commands;
-    }
-
-    public static Command[] getGalacticSearchTrajectoryCommands() {
-        return m_galacticSearchTrajectoryCommands;
-    }
 
     public static void configureAutoChooser() {
       //SmartDashboard.putData("Auto Chooser", m_autoChooser);

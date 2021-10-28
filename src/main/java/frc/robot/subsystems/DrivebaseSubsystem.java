@@ -240,10 +240,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
 			m_savedPose = m_odometry.update(m_gyro.getHeading(), 
 			-m_leftMaster.getSelectedSensorPosition(Constants.PID_PRIMARY) * m_kEdgesToMetersAdjustment, 
-			-m_rightMaster.getSelectedSensorPosition(Constants.PID_PRIMARY) * m_kEdgesToMetersAdjustment);
+			-m_rightMaster.getSelectedSensorPosition(Constants.PID_PRIMARY) * m_kEdgesToMetersAdjustment); 
 		}
 		else {
-			m_differentialDrive.curvatureDrive(-OI.getXboxRightJoystickX() * 0.4, OI.getXboxLeftJoystickY(), true);
+			m_differentialDrive.curvatureDrive(-OI.getXboxRightJoystickX() * 0.3, OI.getXboxLeftJoystickY(), true);
 		}
 
 		m_differentialDrive.feed();
